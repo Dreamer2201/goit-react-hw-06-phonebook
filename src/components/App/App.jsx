@@ -1,17 +1,24 @@
 import { useState, useEffect } from 'react';
-import { nanoid } from 'nanoid';
 import PhonebookForm from '../PhonebookForm/PhonebookForm';
 import Contacts from '../Contacts/Contacts';
 import FilterContacts from '../FilterContacts';
-import { Wrapper,Title } from './AppStyled';
+import { Wrapper, Title } from './AppStyled';
+import { useSelector, useDispatch } from 'react-redux';
+import { getContacts } from 'redux/contacts/contacts-selectors';
+import { getFilter } from 'redux/filter/filter-selectors';
+import { addContact, removeContact } from 'redux/contacts/contacts-actions';
+import { filterListContact } from 'redux/filter/filter-actions';
 
 export default function App() {
-  const [contacts, setContacts] = useState(JSON.parse(localStorage.getItem('listcontact')) ?? []);
-  const [filter, setFilter] = useState('');
+  const contacts = useSelector(getContacts);
+  const filter = useSelector(getFilter);
+  const dispatch = useDispatch();
+  // const [contacts, setContacts] = useState(JSON.parse(localStorage.getItem('listcontact')) ?? []);
+  // const [filter, setFilter] = useState('');
  
-  useEffect(() => {
-    window.localStorage.setItem('listcontact', JSON.stringify(contacts));
-  }, [contacts]);
+  // useEffect(() => {
+  //   window.localStorage.setItem('listcontact', JSON.stringify(contacts));
+  // }, [contacts]);
   
   useEffect(() => {
     return () => {
@@ -24,38 +31,46 @@ export default function App() {
     return result;
   }
 
-  const addContact = (contact) => {
+  const onAddContact = (contact) => {
     if (isDuplicate(contact)) {
       return alert(`${contact.name} is already in Phonebook List`);
     }
-    const newContact = {
-        ...contact,
-        id: nanoid(),
-      }
-    setContacts((prev) => {
-      return [...prev, newContact]
-    })
+    // const newContact = {
+    //     ...contact,
+    //     id: nanoid(),
+    // }
+    const action = addContact(contact);
+    dispatch(action);
+    // setContacts((prev) => {
+    //   return [...prev, newContact]
+    // })
   }
 
   const deleteContact = (id) => {
-    setContacts((prev) => {
-      const newContacts = prev.filter((item) => item.id !== id);
-      return newContacts;
-    })
+    // setContacts((prev) => {
+    //   const newContacts = prev.filter((item) => item.id !== id);
+    //   return newContacts;
+    // })
+    const action = removeContact(id);
+    dispatch(action);
   }
 
   const handleChangeFilter = (e) => {
     const { value } = e.target;
-    setFilter(value);
+  //   setFilter(value);
+    const action = filterListContact(value);
+    dispatch(action);
   }
   
   const filterContact = () => {
-    const filterNormolaze = filter.toLocaleLowerCase();
+    console.log(filter);
+    console.log(contacts);
+    const filterNormolaze = filter.filter.toLocaleLowerCase();
     if (!filter) {
       return contacts;
     }
 
-    const filterContacts = contacts.filter(({ name }) => {
+    const filterContacts = contacts.contacts.filter(({ name }) => {
       const nameContactNormolaze = name.toLocaleLowerCase();
       const resultFilter = nameContactNormolaze.includes(filterNormolaze);
       return resultFilter;
@@ -69,7 +84,7 @@ export default function App() {
         <div>
           <Title>Phonebook</Title>
           <PhonebookForm
-            onAddContact={addContact}
+            onAddContact={onAddContact}
           />
         </div>
         <div>
