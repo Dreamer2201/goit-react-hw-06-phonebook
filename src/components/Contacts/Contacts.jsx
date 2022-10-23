@@ -1,11 +1,9 @@
 import PropTypes from "prop-types";
-import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
 import { removeContact } from "redux/contacts/contactsSlice";
 import { ContactsList, ContactItem, DeleteContactBtn } from './ContactsStyled';
 
-export default function Contacts() {
-    const items = useSelector(state => state.contacts.contacts);
+export default function Contacts({items}) {
     const dispatch = useDispatch();
     const elements = items.map(({ id, name, number }) => {
         return  <ContactItem key={id}> {name}: {number}
