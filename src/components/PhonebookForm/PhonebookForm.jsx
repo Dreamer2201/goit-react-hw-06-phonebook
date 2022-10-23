@@ -4,7 +4,6 @@ import { Form, Btn } from './PhonebookFormStyled';
 import { InputName } from '../App/AppStyled';
    
 export default function PhonebookForm({onAddContact}) {
-
     const [name, setName] = useState('');
     const [number, setNumber] = useState('');
 

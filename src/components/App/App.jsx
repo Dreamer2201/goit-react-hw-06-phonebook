@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { addContact } from 'redux/contacts/contactsSlice';
 import PhonebookForm from '../PhonebookForm/PhonebookForm';
 import Contacts from '../Contacts/Contacts';
 import FilterContacts from '../FilterContacts';
@@ -6,7 +7,7 @@ import { Wrapper, Title } from './AppStyled';
 import { useSelector, useDispatch } from 'react-redux';
 import { getContacts } from 'redux/contacts/contacts-selectors';
 import { getFilter } from 'redux/filter/filter-selectors';
-import { addContact, removeContact } from 'redux/contacts/contacts-actions';
+
 import { filterListContact } from 'redux/filter/filter-actions';
 
 export default function App() {
@@ -27,7 +28,7 @@ export default function App() {
   }, []);
 
     const isDuplicate = (contact) => {
-    const result = contacts.find((item) => item.name === contact.name);
+    const result = contacts.contacts.find((item) => item.name === contact.name);
     return result;
   }
 
@@ -35,31 +36,14 @@ export default function App() {
     if (isDuplicate(contact)) {
       return alert(`${contact.name} is already in Phonebook List`);
     }
-    // const newContact = {
-    //     ...contact,
-    //     id: nanoid(),
-    // }
-    const action = addContact(contact);
-    dispatch(action);
-    // setContacts((prev) => {
-    //   return [...prev, newContact]
-    // })
-  }
-
-  const deleteContact = (id) => {
-    // setContacts((prev) => {
-    //   const newContacts = prev.filter((item) => item.id !== id);
-    //   return newContacts;
-    // })
-    const action = removeContact(id);
-    dispatch(action);
+    dispatch(addContact(contact));
   }
 
   const handleChangeFilter = (e) => {
-    const { value } = e.target;
-  //   setFilter(value);
-    const action = filterListContact(value);
-    dispatch(action);
+  //   const { value } = e.target;
+  // //   setFilter(value);
+  //   const action = filterListContact(value);
+  //   dispatch(action);
   }
   
   const filterContact = () => {
@@ -80,20 +64,18 @@ export default function App() {
 
   const filteredContacts = filterContact();
   
-  return(<Wrapper>
-        <div>
-          <Title>Phonebook</Title>
-          <PhonebookForm
-            onAddContact={onAddContact}
-          />
-        </div>
-        <div>
-          <Title>Contacts</Title>
-          <FilterContacts onFilter={handleChangeFilter} />
-        <Contacts items={filteredContacts}
-          deleteContact={deleteContact}
-        />
-        </div>
-      </Wrapper>)
+  return (<Wrapper>
+                <div>
+                  <Title>Phonebook</Title>
+                  <PhonebookForm
+                    onAddContact={onAddContact}
+                  />
+                </div>
+                <div>
+                  <Title>Contacts</Title>
+                  <FilterContacts onFilter={handleChangeFilter} />
+                <Contacts />
+                </div>
+            </Wrapper>)
   }
 
