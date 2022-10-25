@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { nanoid } from 'nanoid';
 import { InputName } from './App/AppStyled';
 import { getFilter } from '../redux/filter/filter-selectors';
@@ -26,8 +25,4 @@ export default function FilterContacts() {
             />
         </div>      
     )
-}
-    
-FilterContacts.propTypes = {
-    onFilter: PropTypes.func,
 }
