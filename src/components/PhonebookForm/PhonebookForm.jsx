@@ -1,11 +1,21 @@
 import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { nanoid } from 'nanoid';
 import { Form, Btn } from './PhonebookFormStyled';
 import { InputName } from '../App/AppStyled';
+import { addContact } from 'redux/contacts/contacts-Slice';
+import filterContact from 'redux/contacts/contacts-selectors';
    
-export default function PhonebookForm({onAddContact}) {
+export default function PhonebookForm() {
     const [name, setName] = useState('');
     const [number, setNumber] = useState('');
+    const contacts = useSelector(filterContact);
+    const dispatch = useDispatch();
+
+    const isDuplicate = (contact) => {
+        const result = contacts.find((item) => item.name === contact.name);
+        return result;
+    };
 
     const handleChangeInput = (e) => {
         const { name, value } = e.target;
@@ -26,11 +36,15 @@ export default function PhonebookForm({onAddContact}) {
         const contact = {
             name,
             number,
-        }
-        onAddContact(contact);
+        };
         setName('');
         setNumber('');
-    }
+        if (isDuplicate(contact)) {
+            return alert(`${contact.name} is already in Phonebook List`);
+        }
+        dispatch(addContact(contact));
+    };
+
     let contactNameId = nanoid();
     let contactTelNumId = nanoid();
     return (
